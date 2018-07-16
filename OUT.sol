@@ -65,13 +65,13 @@ contract OutCloud is ERC20
     uint256 public preico_startdate;
     uint256 public preico_enddate;
     bool public lockstatus; 
-  
+    uint256 constant public ETH_DECIMALS = 10 ** 18;
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
     address public ethFundMain = 0xBe80a978364649422708470c979435f43e027209; // address to receive ether from smart contract
     uint256 public ethreceived;
     uint public bonusCalculationFactor;
-    uint256 public minContribution = 0.04 ether;
+    uint256 public minContribution = 10000; // 10 USD  (1 USD = 1000)
     uint256 ContributionAmount;
     uint dis;
    
@@ -115,16 +115,18 @@ contract OutCloud is ERC20
         require(stage != Stages.ENDED);
         require(msg.value >= minContribution);
         require(!stopped && msg.sender != owner);
+        ContributionAmount = ((msg.value).mul(priceFactor.mul(1000)));// 1USD = 1000
         if (stage == Stages.PREICO && now <= preico_enddate){
+            
              
-           dis= getCurrentTokenPrice();
+           dis= getCurrentTokenPrice(ContributionAmount);
            _price_token = _price_token.sub(_price_token.mul(dis).div(100));
           y();
 
     }
     else  if (stage == Stages.ICO && now <= ico_enddate){
   
-          dis= getCurrentTokenPrice();
+          dis= getCurrentTokenPrice(ContributionAmount);
            _price_token = _price_token.sub(_price_token.mul(dis).div(100));
           y();
 
@@ -136,8 +138,9 @@ contract OutCloud is ERC20
     
    
 
-  function getCurrentTokenPrice() private returns (uint)
+  function getCurrentTokenPrice(uint256 individuallyContributedEtherInWei) private returns (uint)
         {
+        require(individuallyContributedEtherInWei >= (minContribution.mul(ETH_DECIMALS)));
         uint disc;
         bonusCalculationFactor = (block.timestamp.sub(preico_startdate)).div(604800); // 1 week time period in seconds
         if (bonusCalculationFactor== 0) 

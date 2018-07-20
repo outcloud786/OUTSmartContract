@@ -1,4 +1,4 @@
-pragma solidity 0.4.23;
+pragma solidity 0.4.24;
 
 /**
  * @title SafeMath
@@ -54,14 +54,14 @@ contract OutCloud is ERC20
     // Symbol of token
     string public constant symbol = "OUT";
     uint8 public constant decimals = 18;
-    uint public _totalsupply = 1000000000 * 10 ** 18; // 1 Billion OUT Coins
+    uint public _totalsupply = 1200000000 * 10 ** 18; // 1.2 Billion OUT Coins
     address public owner;
     uint256 public _price_token;  // price in cents
     uint256 no_of_tokens;
     uint256 total_token;
     bool stopped = false;
     uint256 public ico_startdate;
-    uint256 public ico_enddate;
+    // uint256 public ico_enddate;
     uint256 public preico_startdate;
     uint256 public preico_enddate;
     bool public lockstatus; 
@@ -102,7 +102,7 @@ contract OutCloud is ERC20
     {
         require(EtherPriceFactor != 0);
         owner = msg.sender;
-        balances[owner] = 300000000 * 10 ** 18;  // 300 Million given to owner
+        balances[owner] = 500000000 * 10 ** 18;  // 500 Million given to owner
         stage = Stages.NOTSTARTED;
         lockstatus = true;
         priceFactor = EtherPriceFactor;
@@ -119,14 +119,14 @@ contract OutCloud is ERC20
         if (stage == Stages.PREICO && now <= preico_enddate){
             
              
-           dis= getCurrentTokenPrice(ContributionAmount);
+           dis= getCurrentTokenPricepreICO(ContributionAmount);
            _price_token = _price_token.sub(_price_token.mul(dis).div(100));
           y();
 
     }
-    else  if (stage == Stages.ICO && now <= ico_enddate){
+    else  if (stage == Stages.ICO ){
   
-          dis= getCurrentTokenPrice(ContributionAmount);
+          dis= getCurrentTokenPriceICO(ContributionAmount);
            _price_token = _price_token.sub(_price_token.mul(dis).div(100));
           y();
 
@@ -138,7 +138,7 @@ contract OutCloud is ERC20
     
    
 
-  function getCurrentTokenPrice(uint256 individuallyContributedEtherInWei) private returns (uint)
+  function getCurrentTokenPricepreICO(uint256 individuallyContributedEtherInWei) private returns (uint)
         {
         require(individuallyContributedEtherInWei >= (minContribution.mul(ETH_DECIMALS)));
         uint disc;
@@ -152,6 +152,26 @@ contract OutCloud is ERC20
         else if (bonusCalculationFactor == 3) 
            disc = 5;                     //5 % Discount
         
+            
+            return disc;
+     
+        }
+        
+        function getCurrentTokenPriceICO(uint256 individuallyContributedEtherInWei) private returns (uint)
+        {
+        require(individuallyContributedEtherInWei >= (minContribution.mul(ETH_DECIMALS)));
+        uint disc;
+        bonusCalculationFactor = (block.timestamp.sub(ico_startdate)).div(604800); // 1 week time period in seconds
+        if (bonusCalculationFactor== 0) 
+            disc = 30;                     //30 % Discount
+        else if (bonusCalculationFactor == 1) 
+            disc = 20;                     //20 % Discount
+        else if (bonusCalculationFactor ==2 ) 
+            disc = 10;                      //10 % Discount
+        else if (bonusCalculationFactor == 3) 
+           disc = 5;                     //5 % Discount
+        else if (bonusCalculationFactor > 3) 
+           disc = 0;                  //0% Discount
             
             return disc;
      
@@ -211,14 +231,14 @@ contract OutCloud is ERC20
           balances[address(this)] = balances[address(this)].add(400000000 * 10 ** 18) ; //400 Million in ICO
           _price_token = 150;   // 1 OUT =  15 cents (1USD = 1000)
           ico_startdate = now;
-         ico_enddate = now + 28 days; //time period for ICO = 4 weeks
+        //  ico_enddate = now + 28 days; //time period for ICO = 4 weeks
           emit Transfer(0, address(this), balances[address(this)]);
       
           }
 
     function end_ICO() external onlyOwner atStage(Stages.ICO)
     {
-        require(now > ico_enddate);
+        // require(now > ico_enddate);
         stage = Stages.ENDED;
         lockstatus = false;
         uint256 x = balances[address(this)];

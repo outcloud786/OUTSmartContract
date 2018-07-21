@@ -68,7 +68,7 @@ contract OutCloud is ERC20
     uint256 constant public ETH_DECIMALS = 10 ** 18;
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
-    address public ethFundMain = 0xBe80a978364649422708470c979435f43e027209; // address to receive ether from smart contract
+    address public ethFundMain = 0xbCa409CaD1d339267af01aF0A49002E00e9BE090; // address to receive ether from smart contract
     uint256 public ethreceived;
     uint public bonusCalculationFactor;
     uint256 public minContribution = 10000; // 10 USD  (1 USD = 1000)

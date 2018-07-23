@@ -70,6 +70,7 @@ contract OutCloud is ERC20
     mapping(address => mapping(address => uint)) allowed;
     address public ethFundMain = 0xbCa409CaD1d339267af01aF0A49002E00e9BE090; // address to receive ether from smart contract
     uint256 public ethreceived;
+    uint256 public TotalICOSupply = 400000000 * 10 ** 18;
     uint public bonusCalculationFactor;
     uint256 public minContribution = 10000; // 10 USD  (1 USD = 1000)
     uint256 ContributionAmount;
@@ -228,11 +229,11 @@ contract OutCloud is ERC20
       {
           stage = Stages.ICO;
           stopped = false;
-          balances[address(this)] = balances[address(this)].add(400000000 * 10 ** 18) ; //400 Million in ICO
+          balances[address(this)] = balances[address(this)].add(TotalICOSupply) ; //400 Million in ICO
           _price_token = 150;   // 1 OUT =  15 cents (1USD = 1000)
           ico_startdate = now;
         //  ico_enddate = now + 28 days; //time period for ICO = 4 weeks
-          emit Transfer(0, address(this), balances[address(this)]);
+          emit Transfer(0, address(this), TotalICOSupply);
       
           }
 
